@@ -187,11 +187,10 @@ class CarPoseVisualizer(object):
         """
 
         car_pose_file = '%s/%s.json' % (self._data_config['pose_dir'], image_name)
-        car_pose_file = '/media/SSD_1TB/ApolloScape/ECCV2018_apollo/train/'+'%s.json' % image_name
         with open(car_pose_file) as f:
             car_poses = json.load(f)
         image_file = '%s/%s.jpg' % (self._data_config['image_dir'], image_name)
-        image = cv2.imread(image_file, cv2.IMREAD_UNCHANGED)[:, :, ::-1]
+        image = cv2.imread(image_file, cv2.IMREAD_UNCHANGED)
 
         #intrinsic = self.dataset.get_intrinsic(image_name)
         ### we use only camera5 intrinsics
@@ -208,19 +207,9 @@ class CarPoseVisualizer(object):
         mask_all = mask_all * 255 / mask_all.max()
         cv2.addWeighted(image.astype(np.uint8), 1.0, mask_all.astype(np.uint8), alpha, 0, merged_image)
 
-        # Save figure
-        plt.close('all')
-        fig = plt.figure(frameon=False)
-        #fig.set_size_inches(image.shape[1]/10, image.shape[0]/10)
-        ax = plt.Axes(fig, [0., 0., 1., 1.])
-        ax.set_axis_off()
-        fig.add_axes(ax)
-        ax.imshow(merged_image)
-
-        save_set_dir = os.path.join(save_dir, settings)
-        if not os.path.exists(save_set_dir):
-            os.mkdir(save_set_dir)
-        fig.savefig(os.path.join(save_dir, settings, image_name + '.png'), dpi=1)
+        output_path = os.path.join(save_dir, settings, image_name + '.png')
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        cv2.imwrite(output_path, merged_image)
 
         return image
 
@@ -529,13 +518,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
     assert args.image_name
 
-    print('Test converter')
-    pose_file_in = './test_files/%s.poses' % args.image_name
-    pose_file_out = './test_files/%s.json' % args.image_name
-    label_resaver = LabelResaver(args)
-    label_resaver.convert(pose_file_in, pose_file_out)
+    save_dir = '/Users/pliu/Downloads'
+    settings = 'test'
+
+    if False:
+        print('Test converter')
+        pose_file_in = './test_files/%s.poses' % args.image_name
+        pose_file_out = './test_files/%s.json' % args.image_name
+        label_resaver = LabelResaver(args)
+        label_resaver.convert(pose_file_in, pose_file_out)
 
     print('Test visualizer')
     visualizer = CarPoseVisualizer(args)
     visualizer.load_car_models()
-    visualizer.showAnn(args.image_name)
+    visualizer.showAnn(args.image_name, settings=settings, save_dir=save_dir)
