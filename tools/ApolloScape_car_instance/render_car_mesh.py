@@ -14,6 +14,8 @@ from tools.ApolloScape_car_instance import car_models
 from tools.ApolloScape_car_instance import data
 import numpy as np
 import json
+from tqdm import tqdm
+import glob
 import pickle as pkl
 
 import tools.ApolloScape_car_instance.utils.utils as uts
@@ -510,6 +512,10 @@ class LabelResaver(object):
 
 
 if __name__ == '__main__':
+    """
+    Usage:
+    python render_car_mesh.py --data_dir ~/Downloads/3d_car_instance_sample/ --image_name all
+    """
     parser = argparse.ArgumentParser(description='Render car instance and convert car labelled files.')
     parser.add_argument('--image_name', default='180116_053947113_Camera_5',
                         help='the dir of ground truth')
@@ -528,7 +534,13 @@ if __name__ == '__main__':
         label_resaver = LabelResaver(args)
         label_resaver.convert(pose_file_in, pose_file_out)
 
+
     print('Test visualizer')
     visualizer = CarPoseVisualizer(args)
     visualizer.load_car_models()
-    visualizer.showAnn(args.image_name, settings=settings, save_dir=save_dir)
+    if args.image_name.lower() == 'all':
+        image_name_list = [x[:-4] for x in os.listdir(visualizer._data_config['image_dir'])]
+    else:
+        image_name_list = [args.image_name]
+    for image_name in tqdm(image_name_list[:10]):
+        visualizer.showAnn(image_name, settings=settings, save_dir=save_dir)
