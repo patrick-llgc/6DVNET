@@ -76,6 +76,7 @@ class CarPoseVisualizer(object):
     def render_car_cv2(self, pose, car_name, image):
         """Render a car instance given pose and car_name
         """
+        print(pose)
         car = self.car_models[car_name]
         pose = np.array(pose)
         # project 3D points to 2d image plane
@@ -514,17 +515,18 @@ class LabelResaver(object):
 if __name__ == '__main__':
     """
     Usage:
-    python render_car_mesh.py --data_dir ~/Downloads/3d_car_instance_sample/ --image_name all
+    python render_car_mesh.py --save_dir ~/ --data_dir ~/Downloads/3d_car_instance_sample/ --image_name all
     """
     parser = argparse.ArgumentParser(description='Render car instance and convert car labelled files.')
     parser.add_argument('--image_name', default='180116_053947113_Camera_5',
                         help='the dir of ground truth')
     parser.add_argument('--data_dir', default='../apolloscape/3d_car_instance_sample/',
                         help='the dir of ground truth')
+    parser.add_argument('--save_dir', default='/Users/pliu/Downloads',
+                        help='the dir of ground truth')
     args = parser.parse_args()
     assert args.image_name
 
-    save_dir = '/Users/pliu/Downloads'
     settings = 'test'
 
     if False:
@@ -543,4 +545,4 @@ if __name__ == '__main__':
     else:
         image_name_list = [args.image_name]
     for image_name in tqdm(image_name_list[:10]):
-        visualizer.showAnn(image_name, settings=settings, save_dir=save_dir)
+        visualizer.showAnn(image_name, settings=settings, save_dir=args.save_dir)
