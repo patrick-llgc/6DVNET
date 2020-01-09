@@ -76,11 +76,10 @@ class CarPoseVisualizer(object):
     def render_car_cv2(self, pose, car_name, image):
         """Render a car instance given pose and car_name
         """
-        print(pose)
         car = self.car_models[car_name]
         pose = np.array(pose)
         # project 3D points to 2d image plane
-        rmat = uts.euler_angles_to_rotation_matrix(pose[:3])
+        rmat = uts.euler_angles_to_rotation_matrix(pose[:3])  # roll, pitch, yaw
         rvect, _ = cv2.Rodrigues(rmat)
         imgpts, jac = cv2.projectPoints(np.float32(car['vertices']), rvect, pose[3:], self.intrinsic, distCoeffs=None)
 

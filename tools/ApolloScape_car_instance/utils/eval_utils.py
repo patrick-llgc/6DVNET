@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-import utils.utils as uts
+import utils as uts
 
 
 def pose_similarity(dt, gt, shape_sim_mat):
