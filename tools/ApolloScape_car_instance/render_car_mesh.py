@@ -544,5 +544,5 @@ if __name__ == '__main__':
         image_name_list = [x[:-4] for x in os.listdir(visualizer._data_config['image_dir'])]
     else:
         image_name_list = [args.image_name]
-    for image_name in tqdm(image_name_list[:10]):
+    for image_name in tqdm(image_name_list):
         visualizer.showAnn(image_name, settings=settings, save_dir=args.save_dir)
